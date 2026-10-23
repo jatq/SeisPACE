@@ -1,0 +1,24 @@
+{
+  "model": {
+    "patch_height": 16,
+    "patch_width": 16,
+    "stride_height": 8,
+    "stride_width": 8,
+    "embed_dim": 128,
+    "dae_channels": [64, 32, 16, 8],
+    "init_embedding": true,
+    "embed_loss_weight": 0.1
+  },
+  "train": {
+    "epochs": 300,
+    "batch_size": 8,
+    "lr": 0.001,
+    "weight_decay": 0.0001,
+    "scheduler_step": 20,
+    "scheduler_gamma": 0.95,
+    "num_sections": 2000,
+    "num_validation": 50,
+    "validation_interval": 20,
+    "seed": 42
+  }
+}

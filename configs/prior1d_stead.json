@@ -1,0 +1,51 @@
+{
+  "experiment": "stead",
+  "output_dir": "runs/prior1d_stead",
+  "device": "cuda",
+  "data": {
+    "kind": "stead_hdf5",
+    "root": "data/real_seismic_trace",
+    "train_hdf5": "high_60dB_HH.hdf5",
+    "train_meta": "high_60dB_HH.csv",
+    "noise_hdf5": "noise_HH.hdf5",
+    "test_hdf5": "low_HH.hdf5",
+    "test_meta": "low_HH.csv",
+    "data_length": 2000,
+    "snr_threshold_db": 70.0,
+    "clean_mode": "p_and_s",
+    "normalization": "std",
+    "window_normalization": "std",
+    "inference_normalization": "window",
+    "max_train_traces": null
+  },
+  "transform": {
+    "patch_length": 128,
+    "overlap_ratio": 0.9,
+    "num_segments": 15,
+    "norm": "ortho"
+  },
+  "model": {
+    "name": "dual_sparse_prior_1d",
+    "embed_dim": 512,
+    "base_channels": [32, 64, 128, 256, 128, 64, 32, 16]
+  },
+  "train": {
+    "epochs": 25,
+    "batch_size": 64,
+    "lr": 0.01,
+    "weight_decay": 0.0,
+    "scheduler_step": 1,
+    "scheduler_gamma": 0.8,
+    "loss": "mae",
+    "snr_db": [-10.0, 10.0],
+    "num_workers": 0,
+    "amp": true,
+    "seed": 42,
+    "log_interval": 20
+  },
+  "eval": {
+    "snr_db": [],
+    "max_traces": 1000,
+    "trace_start": 0
+  }
+}

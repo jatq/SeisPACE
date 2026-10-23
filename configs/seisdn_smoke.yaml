@@ -1,0 +1,24 @@
+model:
+  img_size: 64
+  patch_size: 4
+  in_chans: 1
+  embed_dim: 256
+  depths: [2, 2, 6, 2]
+  num_heads: [2, 4, 8, 16]
+  window_size: 8
+  mlp_ratio: 4.0
+  output_type: ratio
+
+dataset:
+  train_data_path: /tmp/seisdn_smoke/train
+  val_data_path: /tmp/seisdn_smoke/val
+
+batch_size: 4
+epochs: 1
+num_workers: 0
+use_pretrained: false
+checkpoint_dir: /tmp/seisdn_smoke/checkpoints
+checkpoint_id: smoke
+lr: 0.0001
+decay_epochs: 50
+decay_rate: 0.999

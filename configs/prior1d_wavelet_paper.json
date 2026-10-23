@@ -1,0 +1,43 @@
+{
+  "experiment": "prior1d_wavelet",
+  "output_dir": "runs/prior1d_wavelet",
+  "device": "cuda",
+  "data": {
+    "kind": "wavelet_mat",
+    "root": "data/simulate_wavelet",
+    "train_file": "training_data.mat",
+    "test_file": "testing_data.mat",
+    "normalization": "std",
+    "window_normalization": "std",
+    "inference_normalization": "window"
+  },
+  "transform": {
+    "patch_length": 256,
+    "overlap_ratio": 0.703125,
+    "num_segments": 15,
+    "norm": "ortho"
+  },
+  "model": {
+    "name": "dual_sparse_prior_1d",
+    "embed_dim": 256,
+    "base_channels": [32, 64, 128, 256, 128, 64, 32, 16],
+    "embed_loss_weight": 0.1
+  },
+  "train": {
+    "epochs": 2000,
+    "batch_size": 32,
+    "lr": 0.01,
+    "weight_decay": 0.0,
+    "scheduler_step": 20,
+    "scheduler_gamma": 0.95,
+    "loss": "mae",
+    "snr_db": [-10.0, 10.0],
+    "num_workers": 0,
+    "amp": true,
+    "seed": 42,
+    "log_interval": 20
+  },
+  "eval": {
+    "snr_db": [-10, -8, -6, -4, -2, 0, 2, 4, 6, 8, 10]
+  }
+}

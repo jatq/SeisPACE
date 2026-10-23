@@ -1,37 +1,24 @@
-# Python
 __pycache__/
 *.py[cod]
-*.egg-info/
-dist/
-build/
-.eggs/
-*.egg
-
-# Virtual environments
-venv/
-.env/
-env/
-
-# IDE
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
-
-# Jupyter
+.pytest_cache/
 .ipynb_checkpoints/
-
-# Data files (download via download_data.py)
-dataset/real/*.npy
-dataset/synthetic/*.npz
-
-# Trained model weights (tracked intentionally)
-# model/*.pt
-
-# Output figures
-results_*.png
-
-# OS files
-.DS_Store
-Thumbs.db
+runs/
+checkpoints/
+data/
+third_party/
+.venv/
+venv/
+.idea/
+.vscode/
+*.egg-info/
+build/
+dist/
+*.pt
+*.pth
+*.hdf5
+*.npy
+*.npz
+*.mat
+*.log
+*.segy
+*.sgy
