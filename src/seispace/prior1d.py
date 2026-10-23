@@ -10,67 +10,6 @@ from .config import TransformConfig
 from .transforms import ist_dct, segment_inputs, st_dct
 
 
-def _remap_legacy_state_dict(state_dict: dict[str, torch.Tensor]) -> dict[str, torch.Tensor]:
-    """Map historical 2023 checkpoint keys to the current module names."""
-    if not any(key.startswith("sparse_map.") for key in state_dict):
-        return state_dict
-    remapped: dict[str, torch.Tensor] = {}
-    for key, value in state_dict.items():
-        if key.startswith("sparse_map."):
-            suffix = key[len("sparse_map.") :]
-            suffix = suffix.replace(".weight", ".conv.weight").replace(
-                ".bias", ".conv.bias"
-            )
-            remapped[f"sparse_mapping.{suffix}"] = value
-        elif key.startswith("unet."):
-            suffix = key[len("unet.") :].replace(".deconv.", ".conv.")
-            remapped[f"sparse_denoising.{suffix}"] = value
-        elif key.startswith("head.0."):
-            remapped[f"sparse_denoising.8.conv.{key[len('head.0.'):]}"] = value
-        elif key.startswith("head.2."):
-            remapped[f"inverse_sparse_mapping.1.conv.{key[len('head.2.'):]}"] = value
-        else:
-            remapped[key] = value
-    return remapped
-
-
-def _remap_upstream_state_dict(
-    state_dict: dict[str, torch.Tensor],
-) -> dict[str, torch.Tensor]:
-    """Map the released 1D prior checkpoint keys to the current module names."""
-    if "embed.weight" not in state_dict:
-        return state_dict
-    remapped: dict[str, torch.Tensor] = {}
-    ignored = {"dct_weight", "idct_weight", "identity"}
-    for key, value in state_dict.items():
-        if key in ignored:
-            continue
-        if key.startswith("embed."):
-            remapped[f"sparse_mapping.1.conv.{key[len('embed.'):]}"] = value
-        elif key.startswith("inverse_embed."):
-            remapped[
-                f"inverse_sparse_mapping.1.conv.{key[len('inverse_embed.'):]}"
-            ] = value
-        elif key.startswith("dae.unet."):
-            suffix = key[len("dae.unet.") :].replace(".deconv.", ".conv.")
-            if suffix.startswith("8.") and not suffix.startswith("8.conv."):
-                suffix = "8.conv." + suffix[2:]
-            remapped[f"sparse_denoising.{suffix}"] = value
-        else:
-            remapped[key] = value
-    return remapped
-
-
-def _drop_embedding_bias(
-    state_dict: dict[str, torch.Tensor],
-) -> dict[str, torch.Tensor]:
-    ignored = {
-        "sparse_mapping.1.conv.bias",
-        "inverse_sparse_mapping.1.conv.bias",
-    }
-    return {key: value for key, value in state_dict.items() if key not in ignored}
-
-
 class PWC(nn.Module):
     def __init__(
         self, in_channels: int, out_channels: int, bias: bool = True
@@ -134,11 +73,7 @@ class Transpose(nn.Module):
 
 
 class DualSparsePrior1D(nn.Module):
-    """Lightweight dual-sparse seismic prior with legacy checkpoint support.
-
-    Historical checkpoint keys are translated by ``load_compatible_state_dict``;
-    new checkpoints use the current SeisPACE module names.
-    """
+    """Lightweight dual-sparse seismic prior."""
 
     def __init__(
         self,
@@ -281,12 +216,3 @@ class DualSparsePrior1D(nn.Module):
     def parameter_count(self) -> int:
         return sum(parameter.numel() for parameter in self.parameters())
 
-    def load_compatible_state_dict(
-        self, state_dict: dict[str, torch.Tensor], strict: bool = True
-    ):
-        return super().load_state_dict(
-            _drop_embedding_bias(
-                _remap_upstream_state_dict(_remap_legacy_state_dict(state_dict))
-            ),
-            strict=strict,
-        )

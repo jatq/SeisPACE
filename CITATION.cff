@@ -9,11 +9,10 @@ authors:
     given-names: Yu
   - family-names: Zhang
     given-names: Shengli
-version: 0.1.0
+version: 0.2.0
 date-released: 2026-10-23
 license: MIT
 repository-code: "https://github.com/jatq/SeisPACE"
 abstract: >-
   Official research code for baseline-anchored prior calibration in seismic
-  denoising, including 1D and 2D dual-sparse priors, calibrators, controls,
-  and reproducible experiment scripts.
+  denoising, including compact 1D and 2D training and inference pipelines.

@@ -3,7 +3,6 @@ __pycache__/
 .pytest_cache/
 .ipynb_checkpoints/
 runs/
-checkpoints/
 data/
 third_party/
 .venv/
@@ -15,6 +14,8 @@ build/
 dist/
 *.pt
 *.pth
+!checkpoints/
+!checkpoints/seispace.pt
 *.hdf5
 *.npy
 *.npz
